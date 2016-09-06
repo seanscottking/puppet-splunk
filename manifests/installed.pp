@@ -3,13 +3,24 @@ class splunk::installed (
   $package = $splunk::package,
   $splunk_home = $splunk::splunk_home,
   $splunk_os_user = $splunk::splunk_os_user,
-  $version = $splunk::version
+  $version = $splunk::version,
+  $package_url = $splunk::package_url,
 ) {
   if $version == undef {
-    package { $package:
-      ensure => installed,
+    if $package_url {
+      package { $package:
+        ensure   => installed,
+        provider => rpm,
+        source   => $package_url,
+      }
     }
-  } else {
+    else {
+      package { $package:
+        ensure => installed,
+      }
+    }
+  }
+  else {
     package { $package:
       ensure => $version,
     }
